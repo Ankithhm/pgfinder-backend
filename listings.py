@@ -1,14 +1,11 @@
-# PgFinder - Day 2
-# Proper classes for PG listings
+import json
+import os
 
-# ─────────────────────────────────────
-# CLASS 1: PGListing
-# Represents one single PG
-# ─────────────────────────────────────
+
 
 class PGListing:
-    def __init__(self, name, area, 
-                 rent, food, wifi, 
+    def __init__(self, name, area,
+                 rent, food, wifi,
                  distance_km):
         self.name = name
         self.area = area
@@ -29,7 +26,7 @@ class PGListing:
             "rating": rating,
             "comment": comment
         })
-        total = sum(r["rating"] 
+        total = sum(r["rating"]
                     for r in self.reviews)
         self.rating = total / len(self.reviews)
         print(f"Review added to {self.name}")
@@ -48,8 +45,9 @@ class PGListing:
 
     def __repr__(self):
         return f"PGListing({self.name}, ₹{self.rent})"
-    
-  
+
+
+
 
 class PGManager:
     def __init__(self):
@@ -145,13 +143,51 @@ class PGManager:
             pg.display()
         print(f"Total: {len(pgs)} PGs found")
 
-        # ─────────────────────────────────────
-# CREATE PG LISTINGS
-# ─────────────────────────────────────
+    def save_to_file(self, filename="pgs.json"):
+        data = []
+        for pg in self.listings:
+            data.append({
+                "name": pg.name,
+                "area": pg.area,
+                "rent": pg.rent,
+                "food": pg.food,
+                "wifi": pg.wifi,
+                "distance_km": pg.distance_km,
+                "is_verified": pg.is_verified,
+                "rating": pg.rating,
+                "reviews": pg.reviews
+            })
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
+        print(f"✅ Saved {len(data)} PGs to {filename}")
+
+    def load_from_file(self, filename="pgs.json"):
+        if not os.path.exists(filename):
+            print("No saved data found.")
+            return
+        with open(filename, "r") as f:
+            data = json.load(f)
+        self.listings = []
+        for item in data:
+            pg = PGListing(
+                item["name"],
+                item["area"],
+                item["rent"],
+                item["food"],
+                item["wifi"],
+                item["distance_km"]
+            )
+            pg.is_verified = item["is_verified"]
+            pg.rating = item["rating"]
+            pg.reviews = item["reviews"]
+            self.listings.append(pg)
+        print(f"✅ Loaded {len(self.listings)} PGs from {filename}")
+
+
+
 
 manager = PGManager()
 
-# Add all PGs
 manager.add_listing(PGListing(
     "Sri Sai PG", "Koramangala",
     7500, True, True, 1.2))
@@ -184,17 +220,11 @@ manager.add_listing(PGListing(
     "Budget Stay PG", "Electronic City",
     4500, False, False, 5.5))
 
-# ─────────────────────────────────────
-# VERIFY SOME PGs
-# ─────────────────────────────────────
+
 
 manager.listings[0].verify()
 manager.listings[3].verify()
 manager.listings[6].verify()
-
-# ─────────────────────────────────────
-# ADD SOME REVIEWS
-# ─────────────────────────────────────
 
 manager.listings[0].add_review(5, "Great food!")
 manager.listings[0].add_review(4, "Wifi is fast")
@@ -203,31 +233,18 @@ manager.listings[6].add_review(4, "Good location")
 manager.listings[6].add_review(5, "Owner is helpful")
 
 
-results1 = manager.search(
-    max_rent=8000, food=True)
-manager.show_results(results1,
-    "Search 1: Under ₹8000 with Food")
+
+manager.save_to_file()
 
 
-results2 = manager.search(wifi=True)
-manager.show_results(results2,
-    "Search 2: PGs with Wifi")
 
+manager2 = PGManager()
+manager2.load_from_file()
 
-results3 = manager.search(
-    area="Koramangala")
-manager.show_results(results3,
-    "Search 3: Koramangala Only")
-
-
-results4 = manager.search(max_km=3.0)
-manager.show_results(results4,
-    "Search 4: Within 3km")
-
-
-results5 = manager.search(
-    max_rent=7000,
+results = manager2.search(
+    max_rent=8000,
     food=True,
-    wifi=True)
-manager.show_results(results5,
-    "Search 5: ₹7000 + Food + Wifi")
+    wifi=True
+)
+manager2.show_results(results,
+    "Loaded from file: ₹8000 + Food + Wifi")

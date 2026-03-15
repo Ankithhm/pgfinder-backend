@@ -1,0 +1,113 @@
+[
+    {
+        "name": "Sri Sai PG",
+        "area": "Koramangala",
+        "rent": 7500,
+        "food": true,
+        "wifi": true,
+        "distance_km": 1.2,
+        "is_verified": true,
+        "rating": 4.5,
+        "reviews": [
+            {
+                "rating": 5,
+                "comment": "Great food!"
+            },
+            {
+                "rating": 4,
+                "comment": "Wifi is fast"
+            }
+        ]
+    },
+    {
+        "name": "Royal PG",
+        "area": "HSR Layout",
+        "rent": 6000,
+        "food": false,
+        "wifi": true,
+        "distance_km": 3.5,
+        "is_verified": false,
+        "rating": 0.0,
+        "reviews": []
+    },
+    {
+        "name": "Sri Venkata PG",
+        "area": "Whitefield",
+        "rent": 5500,
+        "food": true,
+        "wifi": false,
+        "distance_km": 2.1,
+        "is_verified": false,
+        "rating": 0.0,
+        "reviews": []
+    },
+    {
+        "name": "Comfort Stay PG",
+        "area": "Koramangala",
+        "rent": 8000,
+        "food": true,
+        "wifi": true,
+        "distance_km": 0.8,
+        "is_verified": true,
+        "rating": 5.0,
+        "reviews": [
+            {
+                "rating": 5,
+                "comment": "Very clean"
+            }
+        ]
+    },
+    {
+        "name": "Green View PG",
+        "area": "Electronic City",
+        "rent": 5000,
+        "food": true,
+        "wifi": true,
+        "distance_km": 4.2,
+        "is_verified": false,
+        "rating": 0.0,
+        "reviews": []
+    },
+    {
+        "name": "City Light PG",
+        "area": "HSR Layout",
+        "rent": 7000,
+        "food": false,
+        "wifi": true,
+        "distance_km": 2.8,
+        "is_verified": false,
+        "rating": 0.0,
+        "reviews": []
+    },
+    {
+        "name": "Sunrise PG",
+        "area": "Whitefield",
+        "rent": 6500,
+        "food": true,
+        "wifi": true,
+        "distance_km": 3.1,
+        "is_verified": true,
+        "rating": 4.5,
+        "reviews": [
+            {
+                "rating": 4,
+                "comment": "Good location"
+            },
+            {
+                "rating": 5,
+                "comment": "Owner is helpful"
+            }
+        ]
+    },
+    {
+        "name": "Budget Stay PG",
+        "area": "Electronic City",
+        "rent": 4500,
+        "food": false,
+        "wifi": false,
+        "distance_km": 5.5,
+        "is_verified": false,
+        "rating": 0.0,
+        "reviews": []
+    }
+]
