@@ -7,8 +7,48 @@ class PGListing:
     def __init__(self, name, area,
                  rent, food, wifi,
                  distance_km):
-        self.name = name
-        self.area = area
+        
+        if not name or len(name.strip()) == 0:
+            raise ValueError(
+                "PG name cannot be empty")
+
+        
+        if not area or len(area.strip()) == 0:
+            raise ValueError(
+                "Area cannot be empty")
+
+        
+        if not isinstance(rent, (int, float)):
+            raise TypeError(
+                "Rent must be a number")
+        if rent <= 0:
+            raise ValueError(
+                "Rent must be greater than 0")
+        if rent > 50000:
+            raise ValueError(
+                "Rent seems too high. Max 50000")
+
+        
+        if not isinstance(food, bool):
+            raise TypeError(
+                "Food must be True or False")
+        if not isinstance(wifi, bool):
+            raise TypeError(
+                "Wifi must be True or False")
+
+       
+        if not isinstance(distance_km, (int, float)):
+            raise TypeError(
+                "Distance must be a number")
+        if distance_km < 0:
+            raise ValueError(
+                "Distance cannot be negative")
+        if distance_km > 100:
+            raise ValueError(
+                "Distance too far. Max 100km")
+
+        self.name = name.strip()
+        self.area = area.strip()
         self.rent = rent
         self.food = food
         self.wifi = wifi
@@ -22,9 +62,22 @@ class PGListing:
         print(f"✅ {self.name} is now verified!")
 
     def add_review(self, rating, comment):
+       
+        if not isinstance(rating, (int, float)):
+            raise TypeError(
+                "Rating must be a number")
+        if rating < 1 or rating > 5:
+            raise ValueError(
+                "Rating must be between 1 and 5")
+
+       
+        if not comment or len(comment.strip()) == 0:
+            raise ValueError(
+                "Comment cannot be empty")
+
         self.reviews.append({
             "rating": rating,
-            "comment": comment
+            "comment": comment.strip()
         })
         total = sum(r["rating"]
                     for r in self.reviews)
@@ -48,12 +101,22 @@ class PGListing:
 
 
 
-
 class PGManager:
     def __init__(self):
         self.listings = []
 
     def add_listing(self, pg):
+        # Validate it's a PGListing object
+        if not isinstance(pg, PGListing):
+            raise TypeError(
+                "Only PGListing objects allowed")
+
+        # Check for duplicate names
+        existing = [p.name for p in self.listings]
+        if pg.name in existing:
+            raise ValueError(
+                f"PG '{pg.name}' already exists")
+
         self.listings.append(pg)
         print(f"Added: {pg.name}")
 
@@ -181,8 +244,7 @@ class PGManager:
             pg.rating = item["rating"]
             pg.reviews = item["reviews"]
             self.listings.append(pg)
-        print(f"✅ Loaded {len(self.listings)} PGs from {filename}")
-
+        print(f"✅ Loaded {len(self.listings)} PGs")
 
 
 
@@ -222,6 +284,7 @@ manager.add_listing(PGListing(
 
 
 
+
 manager.listings[0].verify()
 manager.listings[3].verify()
 manager.listings[6].verify()
@@ -234,17 +297,67 @@ manager.listings[6].add_review(5, "Owner is helpful")
 
 
 
+
+print("\n--- TESTING VALIDATION ---\n")
+
+
+print("Test 1: Adding valid PG...")
+try:
+    manager.add_listing(PGListing(
+        "New Test PG", "Marathahalli",
+        6000, True, True, 2.5))
+    print("✅ Test 1 passed!\n")
+except Exception as e:
+    print(f"❌ Test 1 failed: {e}\n")
+
+
+print("Test 2: Negative rent...")
+try:
+    manager.add_listing(PGListing(
+        "Bad PG", "Koramangala",
+        -5000, True, True, 1.0))
+    print("❌ Test 2 failed!\n")
+except ValueError as e:
+    print(f"✅ Test 2 passed! Caught: {e}\n")
+
+
+print("Test 3: Empty name...")
+try:
+    manager.add_listing(PGListing(
+        "", "Koramangala",
+        6000, True, True, 1.0))
+    print("❌ Test 3 failed!\n")
+except ValueError as e:
+    print(f"✅ Test 3 passed! Caught: {e}\n")
+
+
+print("Test 4: Rating above 5...")
+try:
+    manager.listings[0].add_review(
+        10, "Amazing!")
+    print("❌ Test 4 failed!\n")
+except ValueError as e:
+    print(f"✅ Test 4 passed! Caught: {e}\n")
+
+
+print("Test 5: Duplicate PG name...")
+try:
+    manager.add_listing(PGListing(
+        "Sri Sai PG", "Koramangala",
+        7000, True, True, 1.5))
+    print("❌ Test 5 failed!\n")
+except ValueError as e:
+    print(f"✅ Test 5 passed! Caught: {e}\n")
+
+
+print("Test 6: Valid review...")
+try:
+    manager.listings[0].add_review(
+        5, "Excellent PG!")
+    print("✅ Test 6 passed!\n")
+except Exception as e:
+    print(f"❌ Test 6 failed: {e}\n")
+
+
 manager.save_to_file()
-
-
-
-manager2 = PGManager()
-manager2.load_from_file()
-
-results = manager2.search(
-    max_rent=8000,
-    food=True,
-    wifi=True
-)
-manager2.show_results(results,
-    "Loaded from file: ₹8000 + Food + Wifi")
+print("All tests complete! 🎉")

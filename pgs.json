@@ -7,7 +7,7 @@
         "wifi": true,
         "distance_km": 1.2,
         "is_verified": true,
-        "rating": 4.5,
+        "rating": 4.666666666666667,
         "reviews": [
             {
                 "rating": 5,
@@ -16,6 +16,10 @@
             {
                 "rating": 4,
                 "comment": "Wifi is fast"
+            },
+            {
+                "rating": 5,
+                "comment": "Excellent PG!"
             }
         ]
     },
@@ -106,6 +110,17 @@
         "food": false,
         "wifi": false,
         "distance_km": 5.5,
+        "is_verified": false,
+        "rating": 0.0,
+        "reviews": []
+    },
+    {
+        "name": "New Test PG",
+        "area": "Marathahalli",
+        "rent": 6000,
+        "food": true,
+        "wifi": true,
+        "distance_km": 2.5,
         "is_verified": false,
         "rating": 0.0,
         "reviews": []
