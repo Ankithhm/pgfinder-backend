@@ -5,7 +5,17 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from database import get_db
+from pydantic import BaseModel
 from db_models import PGListingDB
+
+# Request body model
+class PGListingCreate(BaseModel):
+    name: str
+    area: str
+    rent: int
+    food: bool
+    wifi: bool
+    distance_km: float
 
 app = FastAPI(
     title="PgFinder API",
@@ -126,4 +136,54 @@ async def get_listing(
         "distance_km": pg.distance_km,
         "is_verified": pg.is_verified,
         "rating": pg.rating
+    }
+
+@app.post("/listings")
+async def create_listing(
+    listing: PGListingCreate,
+    db: AsyncSession = Depends(get_db)
+):
+    # Create new PG listing
+    new_pg = PGListingDB(
+        name=listing.name,
+        area=listing.area,
+        rent=listing.rent,
+        food=listing.food,
+        wifi=listing.wifi,
+        distance_km=listing.distance_km
+    )
+
+    # Save to database
+    db.add(new_pg)
+    await db.commit()
+    await db.refresh(new_pg)
+
+    return {
+        "message": "PG listing created!",
+        "id": new_pg.id,
+        "name": new_pg.name,
+        "area": new_pg.area,
+        "rent": new_pg.rent
+    }
+
+@app.delete("/listings/{pg_id}")
+async def delete_listing(
+    pg_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(PGListingDB).where(
+            PGListingDB.id == pg_id)
+    )
+    pg = result.scalar_one_or_none()
+
+    if not pg:
+        return {"error": "PG not found"}
+
+    await db.delete(pg)
+    await db.commit()
+
+    return {
+        "message": "PG deleted successfully",
+        "deleted": pg.name
     }
